@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link,useNavigate} from 'react-router-dom'
-import axios from 'axios'
+import axiosInstance from '../utils/axiosInstance'
 
 const SignUp = () => {
    const [username,setUsername] = useState("")
@@ -18,7 +18,7 @@ const SignUp = () => {
       formData.append('email',email)
       formData.append('password',password)
       formData.append('confirmPassword',confirmPassword)
-      const resposne = await axios.post('http://localhost:8000/api/account/user/',formData)
+      const resposne = await axiosInstance.post('/account/user/',formData)
       navigate('/signin')
     }catch(error){
       console.log(error)

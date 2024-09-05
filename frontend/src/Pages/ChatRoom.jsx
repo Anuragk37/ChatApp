@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Video, Mic, MicOff, VideoOff, PhoneOff } from 'lucide-react';
 import useWebSocket from 'react-use-websocket';
-import { useNavigate } from 'react-router-dom';
 
 const ChatRoom = () => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -12,37 +11,31 @@ const ChatRoom = () => {
   const peerConnectionRef = useRef(null);
   const { roomName } = useParams();
   const navigate = useNavigate();
-
   const [isOfferCreated, setIsOfferCreated] = useState(false);
+
+  const { sendMessage, lastMessage } = useWebSocket(`ws://localhost:8000/ws/chat-room/${roomName}/`, {
+    shouldReconnect: () => true,
+  });
 
   const servers = {
     iceServers: [
       {
-        urls: [
-          'stun:stun1.l.google.com:19302',
-          'stun:stun2.l.google.com:19302',
-        ],
+        urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
       },
     ],
   };
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(`ws://localhost:8000/ws/chat-room/${roomName}/`, {
-    shouldReconnect: (closeEvent) => true, 
-  });
-
   useEffect(() => {
     const initializeCall = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
+          localVideoRef.current.style.transform = 'scaleX(-1)'; 
         }
         createPeerConnection(stream);
       } catch (error) {
-        console.error('Error initializing call:', error);
+        console.error('Error accessing media devices:', error);
       }
     };
 
@@ -61,16 +54,23 @@ const ChatRoom = () => {
   useEffect(() => {
     if (lastMessage) {
       const data = JSON.parse(lastMessage.data);
-      if (data.type === 'offer') {
-        handleOffer(data.offer);
-      } else if (data.type === 'answer') {
-        handleAnswer(data.answer);
-      } else if (data.type === 'candidate') {
-        handleCandidate(data.candidate);
+      switch (data.type) {
+        case 'offer':
+          handleOffer(data.offer);
+          break;
+        case 'answer':
+          handleAnswer(data.answer);
+          break;
+        case 'candidate':
+          handleCandidate(data.candidate);
+          break;
+        default:
+          break;
       }
     }
   }, [lastMessage]);
 
+  // Create a WebRTC peer connection and add event handlers
   const createPeerConnection = (stream) => {
     peerConnectionRef.current = new RTCPeerConnection(servers);
 
@@ -86,18 +86,15 @@ const ChatRoom = () => {
           remoteVideoRef.current.srcObject = new MediaStream();
         }
         remoteVideoRef.current.srcObject.addTrack(event.track);
+        remoteVideoRef.current.style.transform = 'scaleX(-1)';
       }
     };
 
-    stream.getTracks().forEach((track) => {
-      peerConnectionRef.current.addTrack(track, stream);
-    });
+    stream.getTracks().forEach((track) => peerConnectionRef.current.addTrack(track, stream));
 
-    setTimeout(() => {
-      if (!isOfferCreated && peerConnectionRef.current.signalingState === 'stable') {
-        createAndSendOffer();
-      }
-    }, 1000); 
+    if (!isOfferCreated && peerConnectionRef.current.signalingState === 'stable') {
+      createAndSendOffer();
+    }
   };
 
   const createAndSendOffer = async () => {
@@ -107,14 +104,13 @@ const ChatRoom = () => {
       sendMessage(JSON.stringify({ type: 'offer', offer }));
       setIsOfferCreated(true);
     } catch (error) {
-      console.error('Error creating and sending offer:', error);
+      console.error('Error creating or sending offer:', error);
     }
   };
 
   const handleOffer = async (offer) => {
     try {
       await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(offer));
-
       const answer = await peerConnectionRef.current.createAnswer();
       await peerConnectionRef.current.setLocalDescription(answer);
       sendMessage(JSON.stringify({ type: 'answer', answer }));
@@ -183,26 +179,15 @@ const ChatRoom = () => {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-gray-800 rounded-lg overflow-hidden aspect-video relative">
-            <video
-              ref={localVideoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-cover"
-            />
+            <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
             <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded">
               You
             </div>
           </div>
           <div className="bg-gray-800 rounded-lg overflow-hidden aspect-video relative">
-            <video
-              ref={remoteVideoRef}
-              autoPlay
-              playsInline
-              className="w-full h-full object-cover"
-            />
+            <video ref={remoteVideoRef} autoPlay playsInline className="w-full h-full object-cover" />
             <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded">
-              Remote User
+              {'User'}
             </div>
           </div>
         </div>

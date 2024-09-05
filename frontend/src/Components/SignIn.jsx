@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import axiosInstance from '../utils/axiosInstance'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../features/authSlice'
 import { useDispatch } from 'react-redux'
@@ -17,7 +17,7 @@ const SignIn = () => {
       const formData = new FormData()
       formData.append('username',username)
       formData.append('password',password)
-      const response = await axios.post('http://localhost:8000/api/account/login/',formData)
+      const response = await axiosInstance.post('/account/login/',formData)
       console.log(response.data)
       dispatch(login(response.data))
       navigate('/')

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
 const RoomActions = () => {
@@ -10,7 +10,7 @@ const RoomActions = () => {
   const handleCreateRoom = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/chat-room/', { name: roomName });
+      const response = await axiosInstance.post('/chat-room/', { name: roomName });
       console.log(response.data);
       navigate(`/chat-room/${roomName}`);
     } catch (error) {

@@ -11,6 +11,8 @@ import {Provider} from 'react-redux'
 import {store,persistor} from './app/store'
 import { PersistGate } from 'redux-persist/integration/react'
 import ChatRoom from './Pages/ChatRoom';
+import ReverseRoute from './utils/ReverseRoute';
+import ProtecredRoute from './utils/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -19,15 +21,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/signup",
-    element: <SignUp />,
+    element: <ReverseRoute><SignUp /></ReverseRoute>,
   },
   {
     path: "/signin",
-    element: <SignIn />,
+    element: <ReverseRoute><SignIn /></ReverseRoute>,
   },
   {
     path: "/chat-room/:roomName",
-    element: <ChatRoom />
+    element: <ProtecredRoute><ChatRoom /></ProtecredRoute>,
   },
 ]);
 
