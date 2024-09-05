@@ -5,24 +5,21 @@ import { useNavigate } from 'react-router-dom';
 const RoomActions = () => {
   const [activeTab, setActiveTab] = useState('create');
   const [roomName, setRoomName] = useState('');
-
   const navigate = useNavigate();
 
-  const handleCreateRoom = async(e) => {
+  const handleCreateRoom = async (e) => {
     e.preventDefault();
-    try{
-      const response = await axios.post('http://localhost:8000/api/chat-room/',{name:roomName})
-      setRoomName('')
+    try {
+      const response = await axios.post('http://localhost:8000/api/chat-room/', { name: roomName });
       console.log(response.data);
-      
-    }catch(error){
-      console.log(error)
+      navigate(`/chat-room/${roomName}`);
+    } catch (error) {
+      console.error('Error creating room:', error);
     }
   };
 
   const handleJoinRoom = (e) => {
     e.preventDefault();
-    console.log('Join room');
     navigate(`/chat-room/${roomName}`);
   };
 
@@ -47,7 +44,7 @@ const RoomActions = () => {
         </button>
       </div>
       {activeTab === 'create' ? (
-        <form onSubmit={(e) => handleCreateRoom(e)} className="space-y-4">
+        <form onSubmit={handleCreateRoom} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-200">
               Room Name
@@ -64,11 +61,11 @@ const RoomActions = () => {
             type="submit"
             className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md"
           >
-            Create Room
+            Create and Join Room
           </button>
         </form>
       ) : (
-        <form onSubmit={(e) => handleJoinRoom(e)} className="space-y-4">
+        <form onSubmit={handleJoinRoom} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-200">
               Room Name
