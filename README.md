@@ -26,8 +26,8 @@ Ensure you have the following installed:
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/your-repo.git
-   cd your-repo/frontend
+   git clone https://github.com/Anuragk37/ChatApp.git
+   cd ChatApp/frontend
    ```
 
 2. **Install Dependencies**
@@ -52,14 +52,14 @@ Ensure you have the following installed:
 
    ```bash
    git clone https://github.com/yourusername/your-repo.git
-   cd your-repo/backend
+   cd ChatApp/backend
    ```
 
 2. **Create and Activate a Virtual Environment**
 
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   virtualenv venv
+   `venv\Scripts\activate`
    ```
 
 3. **Install Dependencies**
