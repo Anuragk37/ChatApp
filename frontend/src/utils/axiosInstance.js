@@ -3,7 +3,7 @@ import {store} from '../app/store';
 
 
 const axiosInstance = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
+  baseURL: 'http://13.53.197.102/api',
 });
 
 axiosInstance.interceptors.request.use(
