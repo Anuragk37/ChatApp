@@ -14,6 +14,7 @@ const HomePage = () => {
 
   const handleSignUp = () => {
     console.log('/signup');
+    navigate('/signup')
   };
 
   return (
