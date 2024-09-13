@@ -70,7 +70,6 @@ const ChatRoom = () => {
     }
   }, [lastMessage]);
 
-  // Create a WebRTC peer connection and add event handlers
   const createPeerConnection = (stream) => {
     peerConnectionRef.current = new RTCPeerConnection(servers);
 

@@ -1,18 +1,19 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import RoomActions from '../Components/RoomActions';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const isAuthenticated = useSelector((state) => state.auth.isUserAuthenticated);
-
-  
+  const navigate = useNavigate()
 
   const handleSignIn = () => {
     console.log('Sign in');
+    navigate('/signin')
   };
 
   const handleSignUp = () => {
-    console.log('Sign up');
+    console.log('/signup');
   };
 
   return (
