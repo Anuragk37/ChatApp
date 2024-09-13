@@ -13,7 +13,7 @@ const ChatRoom = () => {
   const navigate = useNavigate();
   const [isOfferCreated, setIsOfferCreated] = useState(false);
 
-  const { sendMessage, lastMessage } = useWebSocket(`ws://13.53.197.102/ws/chat-room/${roomName}/`, {
+  const { sendMessage, lastMessage } = useWebSocket(`wss://chatapp.anuragk.online/ws/chat-room/${roomName}/`, {
     shouldReconnect: () => true,
   });
 

@@ -3,7 +3,7 @@ import {store} from '../app/store';
 
 
 const axiosInstance = axios.create({
-  baseURL: 'http://13.53.197.102/api',
+  baseURL: 'https://chatapp.anuragk.online/api',
 });
 
 axiosInstance.interceptors.request.use(
